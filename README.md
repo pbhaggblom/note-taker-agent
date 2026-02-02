@@ -4,22 +4,22 @@ I wanted to try building my first ai agent, and came up with this simple idea. T
 
 The project implements a decoupled pipeline to separate input, processing, and storage:
 
-    REST API: Receives raw text via a POST request and publishes a task to the note-requests exchange.
+- REST API: Receives raw text via a POST request and publishes a task to the note-requests exchange.
 
-    RabbitMQ: Acts as the message broker and buffer, ensuring reliability even under heavy load.
+- RabbitMQ: Acts as the message broker and buffer, ensuring reliability even under heavy load.
 
-    Note Processor: Consumes requests, invokes the local Ollama instance, and routes the generated summary to the summaries exchange.
+- Note Processor: Consumes requests, invokes the local Ollama instance, and routes the generated summary to the summaries exchange.
 
-    File Writer: Listens for completed summaries and persists them to disk with unique, sortable timestamps.
+- File Writer: Listens for completed summaries and persists them to disk with unique, sortable timestamps.
 
 ## Tech Stack
 
-*Framework: Quarkus (Java)
+- Framework: Quarkus (Java)
 
-*AI Orchestration: LangChain4j
+- AI Orchestration: LangChain4j
 
-Model: Llama 3.2 (running via Ollama)
+- Model: Llama 3.2 (running via Ollama)
 
-*Messaging: RabbitMQ (SmallRye Reactive Messaging)
+- Messaging: RabbitMQ (SmallRye Reactive Messaging)
 
-*Containerization: Docker (managed via Quarkus Dev Services)
+- Containerization: Docker (managed via Quarkus Dev Services)
