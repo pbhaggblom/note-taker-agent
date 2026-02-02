@@ -1,62 +1,25 @@
-# code-with-quarkus
+AI Note Taker
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+I wanted to try building my first ai agent, and came up with this simple idea. The agent takes  text as input att outputs a summarized version of the text i Markdown format. Since I'm running the ai locally on my old laptop which I've been using as a home server, I chose the lightweight llama3.2:1b model. So the resources are limited but it's been a fun experiment so far.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+The project implements a decoupled pipeline to separate input, processing, and storage:
 
-## Running the application in dev mode
+    REST API: Receives raw text via a POST request and publishes a task to the note-requests exchange.
 
-You can run your application in dev mode that enables live coding using:
+    RabbitMQ: Acts as the message broker and buffer, ensuring reliability even under heavy load.
 
-```shell script
-./mvnw quarkus:dev
-```
+    Note Processor: Consumes requests, invokes the local Ollama instance, and routes the generated summary to the summaries exchange.
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+    File Writer: Listens for completed summaries and persists them to disk with unique, sortable timestamps.
 
-## Packaging and running the application
+Tech Stack
 
-The application can be packaged using:
+    Framework: Quarkus (Java)
 
-```shell script
-./mvnw package
-```
+    AI Orchestration: LangChain4j
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+    Model: Llama 3.2 (running via Ollama)
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+    Messaging: RabbitMQ (SmallRye Reactive Messaging)
 
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/code-with-quarkus-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Provided Code
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+    Containerization: Docker (managed via Quarkus Dev Services)
